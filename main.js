@@ -153,16 +153,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // === BOOKING / CONTACT FORM (front-end only) ===
+  // === BOOKING / CONTACT FORM — sends real email via Web3Forms ===
   document.querySelectorAll('form[data-inquiry]').forEach(form => {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const success = form.parentElement.querySelector('.form-success') || form.querySelector('.form-success');
-      if (success) {
-        success.classList.add('show');
-        success.textContent = 'Thank you — your request has been received. Our reservations team will confirm shortly.';
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn ? submitBtn.textContent : '';
+
+      // Skip actual sending if no access key has been configured yet
+      const accessKeyField = form.querySelector('input[name="access_key"]');
+      if (!accessKeyField || !accessKeyField.value || accessKeyField.value.includes('YOUR_')) {
+        if (success) {
+          success.classList.add('show');
+          success.style.borderLeftColor = '#c0392b';
+          success.textContent = 'Booking form is not yet connected to email — add your Web3Forms access key in the HTML to activate it.';
+        }
+        return;
       }
-      form.reset();
+
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+
+      try {
+        const response = await fetch(form.action || 'https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        const result = await response.json();
+        if (success) {
+          success.classList.add('show');
+          if (result.success) {
+            success.style.borderLeftColor = 'var(--gold)';
+            success.textContent = 'Thank you — your request has been received. Our reservations team will confirm shortly.';
+            form.reset();
+          } else {
+            success.style.borderLeftColor = '#c0392b';
+            success.textContent = 'Something went wrong sending your request — please call or email us directly instead.';
+          }
+        }
+      } catch (err) {
+        if (success) {
+          success.classList.add('show');
+          success.style.borderLeftColor = '#c0392b';
+          success.textContent = 'Could not send your request — check your connection, or call/email us directly.';
+        }
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalBtnText; }
+      }
     });
   });
 
@@ -188,6 +226,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     tick();
     setInterval(tick, 1000);
+  });
+
+  // === PREFILL BOOKING FORM FROM HOMEPAGE QUICK BAR ===
+  const params = new URLSearchParams(location.search);
+  const prefillMap = { arrival: 'c-arrival', departure: 'c-departure', adults: 'c-guests' };
+  Object.entries(prefillMap).forEach(([param, fieldId]) => {
+    const value = params.get(param);
+    const field = document.getElementById(fieldId);
+    if (value && field) field.value = value;
   });
 
   // === ACTIVE NAV LINK ===

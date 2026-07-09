@@ -45,7 +45,11 @@
     <div class="reveal">
       <p class="eyebrow">Send a Request</p>
       <h2 style="margin-bottom:1.6rem;">Book your stay</h2>
-      <form data-inquiry>
+      <form data-inquiry action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+        <input type="hidden" name="subject" value="New Booking Request — Grays Inn Hotel">
+        <input type="hidden" name="from_name" value="Grays Inn Hotel Website">
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
         <div class="form-row">
           <div class="field">
             <label for="c-name">Full Name</label>
