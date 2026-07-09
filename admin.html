@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin — Grays Inn Hotel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  /* ===== Admin-only styles — layered on top of your existing styles.css ===== */
+  :root{
+    --admin-bg:#0f0d0a;
+    --admin-panel:#1a1712;
+    --admin-border:#2c2620;
+    --ok:#3fae6a;
+    --warn:#c0392b;
+    --pending:#c9a04a;
+  }
+  body{background:var(--admin-bg);}
+  .admin-wrap{max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem;}
+  .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+  .admin-header h1{color:var(--white,#f6f4ef);font-size:1.8rem;margin:0;}
+  .admin-header p{color:#9a917f;font-size:.85rem;margin:.2rem 0 0;}
+  #logout-btn{background:transparent;border:1px solid var(--admin-border);color:#cfc8b8;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;transition:.25s;}
+  #logout-btn:hover{border-color:var(--gold,#D4AF37);color:var(--gold,#D4AF37);}
+
+  /* Login screen */
+  #login-screen{max-width:380px;margin:8rem auto;background:var(--admin-panel);border:1px solid var(--admin-border);border-radius:8px;padding:2.5rem;}
+  #login-screen h2{color:var(--white,#f6f4ef);font-size:1.4rem;margin:0 0 1.5rem;text-align:center;}
+  #login-screen label{display:block;color:#9a917f;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem;}
+  #login-screen input{width:100%;background:#0f0d0a;border:1px solid var(--admin-border);color:#f6f4ef;padding:.7rem .9rem;border-radius:4px;margin-bottom:1.2rem;font-size:.95rem;}
+  #login-screen input:focus{outline:none;border-color:var(--gold,#D4AF37);}
+  #login-btn{width:100%;background:var(--gold,#D4AF37);color:#141210;border:none;padding:.8rem;border-radius:4px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:.8rem;cursor:pointer;}
+  #login-btn:hover{opacity:.9;}
+  #login-error{color:var(--warn);font-size:.8rem;margin-top:1rem;text-align:center;display:none;}
+
+  /* Stat cards */
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+  .stat-card{background:var(--admin-panel);border:1px solid var(--admin-border);border-radius:6px;padding:1.2rem;}
+  .stat-card .num{color:var(--gold,#D4AF37);font-size:1.8rem;font-weight:700;}
+  .stat-card .label{color:#9a917f;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;}
+
+  /* Filter tabs */
+  .filter-tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;}
+  .filter-tabs button{background:transparent;border:1px solid var(--admin-border);color:#9a917f;padding:.5rem 1rem;border-radius:20px;font-size:.8rem;cursor:pointer;transition:.2s;}
+  .filter-tabs button.active{background:var(--gold,#D4AF37);color:#141210;border-color:var(--gold,#D4AF37);font-weight:600;}
+
+  /* Booking cards */
+  #booking-list{display:flex;flex-direction:column;gap:1rem;}
+  .booking-card{background:var(--admin-panel);border:1px solid var(--admin-border);border-radius:8px;padding:1.4rem 1.6rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:start;}
+  .booking-main h3{color:var(--white,#f6f4ef);margin:0 0 .3rem;font-size:1.15rem;}
+  .booking-meta{color:#9a917f;font-size:.85rem;line-height:1.7;}
+  .booking-meta strong{color:#cfc8b8;}
+  .badge{display:inline-block;padding:.25rem .7rem;border-radius:20px;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-left:.5rem;}
+  .badge-available{background:rgba(63,174,106,.15);color:var(--ok);border:1px solid var(--ok);}
+  .badge-conflict{background:rgba(192,57,43,.15);color:var(--warn);border:1px solid var(--warn);}
+  .badge-pending{background:rgba(201,160,74,.15);color:var(--pending);border:1px solid var(--pending);}
+  .badge-confirmed{background:rgba(63,174,106,.15);color:var(--ok);border:1px solid var(--ok);}
+  .badge-unavailable{background:rgba(192,57,43,.15);color:var(--warn);border:1px solid var(--warn);}
+
+  .booking-actions{display:flex;flex-direction:column;gap:.5rem;min-width:180px;}
+  .booking-actions button{border:none;padding:.6rem 1rem;border-radius:4px;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase;cursor:pointer;font-weight:600;transition:.2s;}
+  .btn-confirm{background:var(--ok);color:#fff;}
+  .btn-confirm:hover{opacity:.85;}
+  .btn-unavailable{background:var(--warn);color:#fff;}
+  .btn-unavailable:hover{opacity:.85;}
+  .btn-sent{background:transparent;border:1px solid var(--admin-border);color:#6b6355;cursor:default;}
+  .msg-preview{color:#7a7263;font-size:.8rem;font-style:italic;margin-top:.4rem;}
+
+  #empty-state{text-align:center;color:#6b6355;padding:4rem 1rem;}
+  .loading{text-align:center;color:#9a917f;padding:3rem;}
+  .toast{position:fixed;bottom:2rem;right:2rem;background:var(--admin-panel);border:1px solid var(--gold,#D4AF37);color:#f6f4ef;padding:1rem 1.5rem;border-radius:6px;font-size:.85rem;display:none;z-index:999;}
+
+  @media(max-width:700px){
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .booking-card{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="login-screen">
+  <h2>Grays Inn — Admin</h2>
+  <label for="email">Email</label>
+  <input type="email" id="email" placeholder="you@graysinnhotel.com">
+  <label for="password">Password</label>
+  <input type="password" id="password" placeholder="••••••••">
+  <button id="login-btn">Sign In</button>
+  <p id="login-error">Invalid email or password.</p>
+</div>
+
+<!-- ============ ADMIN DASHBOARD ============ -->
+<div class="admin-wrap" id="dashboard" style="display:none;">
+  <div class="admin-header">
+    <div>
+      <h1>Booking Requests</h1>
+      <p>Grays Inn Hotel & Suites — Admin Dashboard</p>
+    </div>
+    <button id="logout-btn">Log Out</button>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="num" id="stat-pending">0</div><div class="label">Pending</div></div>
+    <div class="stat-card"><div class="num" id="stat-confirmed">0</div><div class="label">Confirmed</div></div>
+    <div class="stat-card"><div class="num" id="stat-unavailable">0</div><div class="label">Unavailable</div></div>
+    <div class="stat-card"><div class="num" id="stat-total">0</div><div class="label">Total This Month</div></div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="pending">Pending</button>
+    <button data-filter="confirmed">Confirmed</button>
+    <button data-filter="unavailable">Unavailable</button>
+  </div>
+
+  <div id="booking-list"><div class="loading">Loading bookings…</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   1. CONFIG — replace these with your real project values
+   ========================================================= */
+const SUPABASE_URL = "https://fkybtcrswnsmoblorkxc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZreWJ0Y3Jzd25zbW9ibG9ya3hjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MTY5MDEsImV4cCI6MjA5OTE5MjkwMX0.r346Rv29_dE7Ab0F9i_ZLYXuy9q1-SnSCnMYw2i9tWc";
+
+const EMAILJS_PUBLIC_KEY = "YOUR_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "YOUR_EMAILJS_SERVICE_ID";
+const EMAILJS_TEMPLATE_CONFIRMED = "YOUR_TEMPLATE_ID_CONFIRMED";
+const EMAILJS_TEMPLATE_UNAVAILABLE = "YOUR_TEMPLATE_ID_UNAVAILABLE";
+
+/* ========================================================= */
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+let allBookings = [];
+let currentFilter = "all";
+
+/* ---------- AUTH ---------- */
+document.getElementById("login-btn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    document.getElementById("login-error").style.display = "block";
+    document.getElementById("login-error").textContent = error.message;
+    return;
+  }
+  showDashboard();
+});
+
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  await sb.auth.signOut();
+  location.reload();
+});
+
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) showDashboard();
+}
+checkSession();
+
+function showDashboard() {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  loadBookings();
+}
+
+/* ---------- LOAD BOOKINGS ---------- */
+async function loadBookings() {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    document.getElementById("booking-list").innerHTML =
+      `<div id="empty-state">Error loading bookings: ${error.message}</div>`;
+    return;
+  }
+
+  allBookings = data;
+  computeAvailability();
+  updateStats();
+  renderBookings();
+}
+
+/* ---------- AVAILABILITY LOGIC ----------
+   A pending request is flagged "conflict" if any OTHER *confirmed*
+   booking for the same room type has overlapping dates. */
+function computeAvailability() {
+  allBookings.forEach(b => {
+    if (b.status !== "pending") { b._availability = null; return; }
+    const conflict = allBookings.some(other =>
+      other.id !== b.id &&
+      other.status === "confirmed" &&
+      other.room_type === b.room_type &&
+      b.arrival <= other.departure &&
+      b.departure >= other.arrival
+    );
+    b._availability = conflict ? "conflict" : "available";
+  });
+}
+
+function updateStats() {
+  const pending = allBookings.filter(b => b.status === "pending").length;
+  const confirmed = allBookings.filter(b => b.status === "confirmed").length;
+  const unavailable = allBookings.filter(b => b.status === "unavailable").length;
+  document.getElementById("stat-pending").textContent = pending;
+  document.getElementById("stat-confirmed").textContent = confirmed;
+  document.getElementById("stat-unavailable").textContent = unavailable;
+  document.getElementById("stat-total").textContent = allBookings.length;
+}
+
+/* ---------- RENDER ---------- */
+function renderBookings() {
+  const list = document.getElementById("booking-list");
+  const filtered = currentFilter === "all"
+    ? allBookings
+    : allBookings.filter(b => b.status === currentFilter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div id="empty-state">No bookings in this view.</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(b => {
+    const statusBadge = `<span class="badge badge-${b.status}">${b.status}</span>`;
+    const availBadge = b._availability
+      ? `<span class="badge badge-${b._availability === 'available' ? 'available' : 'conflict'}">
+           ${b._availability === 'available' ? 'Room Available' : 'Date Conflict'}
+         </span>` : "";
+
+    const actions = b.status === "pending"
+      ? `<button class="btn-confirm" onclick="handleAction('${b.id}','confirmed')">Send Confirmation</button>
+         <button class="btn-unavailable" onclick="handleAction('${b.id}','unavailable')">Send Unavailable</button>`
+      : `<button class="btn-sent" disabled>Email Sent — ${b.status}</button>`;
+
+    return `
+      <div class="booking-card">
+        <div class="booking-main">
+          <h3>${escapeHtml(b.name)} ${statusBadge} ${availBadge}</h3>
+          <div class="booking-meta">
+            <strong>Room:</strong> ${escapeHtml(b.room_type)} &nbsp;•&nbsp;
+            <strong>Guests:</strong> ${b.guests || "—"} <br>
+            <strong>Dates:</strong> ${b.arrival} → ${b.departure} <br>
+            <strong>Email:</strong> ${escapeHtml(b.email)} <br>
+            <strong>Requested:</strong> ${new Date(b.created_at).toLocaleString()}
+          </div>
+          ${b.message ? `<div class="msg-preview">"${escapeHtml(b.message)}"</div>` : ""}
+        </div>
+        <div class="booking-actions">${actions}</div>
+      </div>`;
+  }).join("");
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str || "";
+  return div.innerHTML;
+}
+
+/* ---------- FILTER TABS ---------- */
+document.querySelectorAll(".filter-tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    renderBookings();
+  });
+});
+
+/* ---------- ACTION: send email + update status ---------- */
+async function handleAction(bookingId, newStatus) {
+  const booking = allBookings.find(b => b.id === bookingId);
+  if (!booking) return;
+
+  const templateId = newStatus === "confirmed"
+    ? EMAILJS_TEMPLATE_CONFIRMED
+    : EMAILJS_TEMPLATE_UNAVAILABLE;
+
+  const templateParams = {
+    to_name: booking.name,
+    to_email: booking.email,
+    room_type: booking.room_type,
+    arrival: booking.arrival,
+    departure: booking.departure,
+    guests: booking.guests,
+    message: booking.message || ""
+  };
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, templateId, templateParams);
+
+    const { error } = await supabase
+      .from("bookings")
+      .update({ status: newStatus })
+      .eq("id", bookingId);
+
+    if (error) throw error;
+
+    showToast(newStatus === "confirmed" ? "Confirmation email sent ✓" : "Unavailable notice sent ✓");
+    loadBookings();
+  } catch (err) {
+    showToast("Failed to send: " + (err.text || err.message || "unknown error"));
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 3500);
+}
+</script>
+</body>
+</html>
