@@ -261,13 +261,23 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.15;color:va
   background-size:cover;background-position:center;transform:scale(1.02);
 }
 .room-card:hover::before{transform:scale(1.12);opacity:.34;}
-.room-1::before{background-image:linear-gradient(160deg,#2a2620,#141210),url('Executive.jpg');}
-.room-2::before{background-image:linear-gradient(160deg,#241f16,#141210),url('Deluxe.jpg');}
-.room-3::before{background-image:linear-gradient(160deg,#221d15,#141210),url('Royalsuite.jpg');}
-.room-4::before{background-image:linear-gradient(160deg,#2a2620,#141210),url('Presidential.jpg');}
-.room-5::before{background-image:linear-gradient(160deg,#241f16,#141210),url('Family.jpeg');}
-.room-card::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.86) 10%,rgba(0,0,0,.15) 60%);}
+.room-1::before{background-image:linear-gradient(160deg,rgba(42,38,32,.1),rgba(20,18,16,.5)),url('images/Executive.jpg');}
+.room-2::before{background-image:linear-gradient(160deg,rgba(36,31,22,.1),rgba(20,18,16,.5)),url('images/Deluxe.jpg');}
+.room-3::before{background-image:linear-gradient(160deg,rgba(34,29,21,.1),rgba(20,18,16,.5)),url('images/Royalsuite.jpg');}
+.room-4::before{background-image:linear-gradient(160deg,rgba(42,38,32,.1),rgba(20,18,16,.5)),url('images/Presidential.jpg');}
+.room-5::before{background-image:linear-gradient(160deg,rgba(36,31,22,.1),rgba(20,18,16,.5)),url('images/Family.jpeg');}
+.room-card::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.45) 10%,rgba(0,0,0,0) 60%);}
 .room-card>*{position:relative;z-index:2;}
+
+/* ============ HOMEPAGE / FEATURED ROOM PREVIEW ============ */
+/* If the homepage room cards are NOT using the same .room-1 .. .room-5
+   classes as rooms.html, add these class names to those card elements
+   (in addition to .room-card) so the images show there too: */
+.featured-room-1::before{background-image:linear-gradient(160deg,#2a2620,#141210),url('Executive.jpg');}
+.featured-room-2::before{background-image:linear-gradient(160deg,#241f16,#141210),url('Deluxe.jpg');}
+.featured-room-3::before{background-image:linear-gradient(160deg,#221d15,#141210),url('Royalsuite.jpg');}
+.featured-room-4::before{background-image:linear-gradient(160deg,#2a2620,#141210),url('Presidential.jpg');}
+.featured-room-5::before{background-image:linear-gradient(160deg,#241f16,#141210),url('Family.jpeg');}
 .room-tag{font-family:var(--btn-font);font-size:.65rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;}
 .room-card h3{color:var(--white);font-size:1.6rem;margin:.5rem 0 .6rem;}
 .room-meta{display:flex;gap:1.1rem;font-size:.78rem;color:#cfc8b8;margin-bottom:1rem;}
