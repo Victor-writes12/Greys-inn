@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact &amp; Booking — Grays Inn Hotel</title>
+<meta name="description" content="Contact Grays Inn Hotel or send a booking request. Located on Ogombo Road, Abraham Adesanya, Lekki Phase 2, Lagos.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="preloader">
+  <div class="preloader-mark">Grays Inn</div>
+  <div class="preloader-sub">Hotel &amp; Suites</div>
+  <div class="preloader-bar"></div>
+</div>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="index.html" class="nav-logo">Grays Inn <span>Hotel &amp; Suites</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="rooms.html">Rooms &amp; Suites</a></li>
+      <li><a href="dining.html">Dining</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+      <li><a href="contact.html#booking" class="btn-book">Book Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-hero" style="background-image:url('images/reception-entrance.jpg');">
+  <div class="container page-hero-content">
+    <p class="eyebrow">Get In Touch</p>
+    <h1>Contact &amp; Booking</h1>
+    <p class="breadcrumb"><a href="index.html">Home</a> / Contact</p>
+  </div>
+</header>
+
+<section class="section" id="booking">
+  <div class="container contact-grid">
+
+    <div class="reveal">
+      <p class="eyebrow">Send a Request</p>
+      <h2 style="margin-bottom:1.6rem;">Book your stay</h2>
+      <form data-inquiry>
+        <div class="form-row">
+          <div class="field">
+            <label for="c-name">Full Name</label>
+            <input type="text" id="c-name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="c-email">Email Address</label>
+            <input type="email" id="c-email" name="email" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="c-arrival">Arrival Date</label>
+            <input type="date" id="c-arrival" name="arrival" required>
+          </div>
+          <div class="field">
+            <label for="c-departure">Departure Date</label>
+            <input type="date" id="c-departure" name="departure" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="c-room">Room Type</label>
+            <select id="c-room" name="room">
+              <option>Executive Room</option>
+              <option>Deluxe Room</option>
+              <option>Royal Suite</option>
+              <option>Presidential Suite</option>
+              <option>Family Suite</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="c-guests">Guests</label>
+            <select id="c-guests" name="guests"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="c-message">Message (Optional)</label>
+          <textarea id="c-message" name="message" rows="4" placeholder="Any special requests?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-outline-dark">Submit Booking Request</button>
+        <p class="form-note">This form sends a request only — our reservations team will follow up by email or phone to confirm availability and payment.</p>
+        <div class="form-success"></div>
+      </form>
+    </div>
+
+    <div class="reveal reveal-delay-1">
+      <div class="contact-info-card">
+        <h3>Reach Us Directly</h3>
+        <div class="info-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>
+            <h5>Address</h5>
+            <p>Grays Inn Hotel, Ogombo Rd,<br>Abraham Adesanya,<br>Lekki Phase 2, Lagos 106104, Nigeria</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-envelope"></i>
+          <div>
+            <h5>Email</h5>
+            <a href="mailto:reservations@graysinnhotel.com">reservations@graysinnhotel.com</a>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-clock"></i>
+          <div>
+            <h5>Front Desk</h5>
+            <p>Open 24 hours, every day</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-door-open"></i>
+          <div>
+            <h5>Check-In / Check-Out</h5>
+            <p>Check-in from 2:00pm · Check-out by 12:00pm</p>
+          </div>
+        </div>
+        <iframe class="map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Grays+Inn+Hotel+Ogombo+Rd+Abraham+Adesanya+Lekki+Phase+2+Lagos&output=embed">
+        </iframe>
+        <a class="map-directions-link" href="https://www.google.com/maps/dir/?api=1&destination=Grays+Inn+Hotel+Ogombo+Rd+Abraham+Adesanya+Lekki+Phase+2+Lagos" target="_blank" rel="noopener">
+          Get Directions
+          <i class="fa-solid fa-diamond-turn-right"></i>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section section-beige">
+  <div class="container">
+    <div class="section-head center reveal">
+      <p class="eyebrow">Before You Ask</p>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div class="room-grid faq-grid">
+      <div class="offer-card reveal" style="text-align:left;"><h4>What time is check-in?</h4><p>Check-in is from 2:00pm and check-out by 12:00pm. Early check-in and late check-out can be arranged on request, subject to availability.</p></div>
+      <div class="offer-card reveal reveal-delay-1" style="text-align:left;"><h4>Is parking available?</h4><p>Yes — secure, gated parking is available on-site for all guests, free of charge.</p></div>
+      <div class="offer-card reveal reveal-delay-2" style="text-align:left;"><h4>Do you offer airport pickup?</h4><p>Airport pickup can be arranged in advance — mention it in your booking request and our team will confirm details.</p></div>
+      <div class="offer-card reveal reveal-delay-3" style="text-align:left;"><h4>Can I book the restaurant without staying?</h4><p>Yes, the restaurant and bar are open to walk-in guests as well as hotel residents.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-logo">Grays Inn Hotel</p>
+        <p style="max-width:30ch;font-size:.88rem;line-height:1.7;">A boutique hotel in Lekki Phase 2, Lagos — considered rooms, warm service, and a restaurant &amp; bar worth staying in for.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Explore</h5>
+        <ul>
+          <li><a href="rooms.html">Rooms &amp; Suites</a></li>
+          <li><a href="dining.html">Dining</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Hotel</h5>
+        <ul>
+          <li><a href="contact.html#booking">Book a Room</a></li>
+          <li><a href="dining.html">Restaurant &amp; Bar</a></li>
+          <li><a href="contact.html">Directions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul>
+          <li>Ogombo Rd, Abraham Adesanya,<br>Lekki Phase 2, Lagos 106104</li>
+          <li><a href="mailto:reservations@graysinnhotel.com">reservations@graysinnhotel.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Grays Inn Hotel. All rights reserved.</span>
+      <span><a href="#">Privacy Policy</a><a href="#">Terms &amp; Conditions</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="float-stack">
+  <a class="float-btn to-top" href="#" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+    <i class="fa-solid fa-arrow-up"></i>
+  </a>
+</div>
+
+<script src="main.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
