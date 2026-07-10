@@ -82,9 +82,15 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.15;color:va
   z-index:9999;transition:opacity .7s var(--ease), visibility .7s var(--ease);
 }
 #preloader.hidden{opacity:0;visibility:hidden;}
-.preloader-mark{
-  font-family:var(--display);font-size:2.4rem;color:var(--gold);letter-spacing:.08em;
-  opacity:0;animation:markIn 1s var(--ease) .1s forwards;
+.preloader-logo{
+  width:96px;height:96px;object-fit:cover;border-radius:10px;
+  box-shadow:0 14px 34px rgba(0,0,0,.45);
+  opacity:0;transform:scale(.85);
+  animation:logoIn 1s ease-in-out .1s forwards;
+}
+@keyframes logoIn{
+  from{opacity:0;transform:scale(.85);}
+  to{opacity:1;transform:scale(1);}
 }
 .preloader-sub{
   font-family:var(--btn-font);font-size:.68rem;letter-spacing:.4em;color:#8a8477;
@@ -116,9 +122,12 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.15;color:va
 }
 .nav-logo{
   font-family:var(--display);font-size:1.35rem;color:var(--white);letter-spacing:.02em;
-  display:flex;flex-direction:column;line-height:1;
+  display:flex;align-items:center;gap:.7rem;
 }
-.nav-logo span{font-size:.55rem;letter-spacing:.35em;color:var(--gold);font-family:var(--btn-font);margin-top:.4rem;}
+.nav-logo-img{width:42px;height:42px;object-fit:cover;border-radius:10px;flex-shrink:0;transition:transform .4s var(--ease);}
+.nav-logo:hover .nav-logo-img{transform:scale(1.06);}
+.nav-logo-text{display:flex;flex-direction:column;line-height:1;}
+.nav-logo-sub{font-size:.55rem;letter-spacing:.35em;color:var(--gold);font-family:var(--btn-font);margin-top:.4rem;}
 .nav-links{display:flex;align-items:center;gap:2.1rem;}
 .nav-links a{
   position:relative;font-size:.82rem;letter-spacing:.03em;color:#ece7db;font-weight:400;padding:.3rem 0;
@@ -154,6 +163,7 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.15;color:va
 /* ============ HERO ============ */
 .hero{
   position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:flex-end;
+  padding-top:clamp(120px,14vh,170px);
   background-size:cover;background-position:center;overflow:hidden;
 }
 .hero::before{
@@ -481,7 +491,8 @@ footer{background:var(--rich-black);color:#a9a293;padding:5rem 0 2rem;}
   /* nav */
   .navbar{padding:1.1rem 0;}
   .navbar .container{padding:0 1.25rem;}
-  .nav-logo{font-size:1.1rem;}
+ .nav-logo{font-size:1.1rem;}
+  .nav-logo-img{width:36px;height:36px;}
   .nav-links{
     position:fixed;inset:0;background:var(--rich-black);flex-direction:column;justify-content:center;align-items:center;
     gap:1.8rem;transform:translateX(100%);transition:transform .5s var(--ease);padding:2rem;text-align:center;
